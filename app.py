@@ -4,7 +4,7 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from transformers import pipeline
 
 # Load FAISS index and embedding model
-embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/paraphrase-MiniLM-L3-v2")
 db = FAISS.load_local("faiss_index", embedding_model, allow_dangerous_deserialization=True)
 
 # Load text generation pipeline
