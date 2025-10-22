@@ -1,6 +1,6 @@
 import streamlit as st
 from langchain_community.vectorstores import FAISS
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
 from transformers import pipeline
 
 # Load FAISS index and embedding model
