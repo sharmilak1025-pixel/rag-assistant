@@ -1,7 +1,7 @@
 import os
 from langchain.vectorstores import FAISS
 from langchain.docstore.document import Document
-from langchain_huggingface import HuggingFaceEmbeddings  # ✅ Updated import
+from langchain_huggingface import HuggingFaceEmbeddings
 
 # ✅ Load product descriptions from local file
 def load_documents(file_path="products.txt"):
@@ -15,13 +15,18 @@ embedding_fn = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniL
 # ✅ Load or rebuild FAISS index
 def get_vectorstore(index_dir="faiss_index", products_file="products.txt"):
     index_path = os.path.join(index_dir, "index.faiss")
-    if os.path.exists(index_path):
-        return FAISS.load_local(index_dir, embedding_fn, allow_dangerous_deserialization=True)
-    else:
-        docs = load_documents(products_file)
-        vectorstore = FAISS.from_documents(docs, embedding_fn)
-        vectorstore.save_local(index_dir)
-        return vectorstore
+    try:
+        if os.path.exists(index_path):
+            return FAISS.load_local(index_dir, embedding_fn, allow_dangerous_deserialization=True)
+    except Exception as e:
+        print(f"⚠️ Failed to load FAISS index: {e}")
+
+    # Rebuild index if loading fails
+    print("🔄 Rebuilding FAISS index from products.txt...")
+    docs = load_documents(products_file)
+    vectorstore = FAISS.from_documents(docs, embedding_fn)
+    vectorstore.save_local(index_dir)
+    return vectorstore
 
 # ✅ Initialize vectorstore
 vectorstore = get_vectorstore()
